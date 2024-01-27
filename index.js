@@ -3,7 +3,7 @@ import conectarDB from "./config/db.js";
 import usuariosRoutes from "./routes/usuarios.js"
 // creamos el servidor
 const app = express();
-
+app.use(express.json());
 // conectar con la BD
 conectarDB();
 // puerto de la app
