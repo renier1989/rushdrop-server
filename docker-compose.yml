@@ -6,4 +6,4 @@ services:
     environment:
       - MONGO_URL=${MONGO_URL}
     ports:
-      - "80:4000"
+      - "4000:4000"
