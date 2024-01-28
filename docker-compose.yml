@@ -1,0 +1,9 @@
+version: '3'
+services:
+  backend:
+    container_name: rush-drop-server
+    image: renier1989/rush-drop-server:test3
+    environment:
+      - MONGO_URL=${MONGO_URL}
+    ports:
+      - "80:4000"
