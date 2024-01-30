@@ -4,6 +4,7 @@ import {
   usuarioAutenticado,
 } from "../controllers/authController.js";
 import { check } from "express-validator";
+import authCheck from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -16,6 +17,6 @@ router.post(
   autenticarUsuario
 );
 
-router.get("/", usuarioAutenticado);
+router.get("/", authCheck, usuarioAutenticado);
 
 export default router;

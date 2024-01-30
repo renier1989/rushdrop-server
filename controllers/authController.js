@@ -3,7 +3,6 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
 
-
 const autenticarUsuario = async (req, res, next) => {
   // 1. revisar que no hayan errores
   // aqui se muestran los mensajes de error de Express-validator
@@ -43,23 +42,9 @@ const autenticarUsuario = async (req, res, next) => {
   }
 };
 
-const usuarioAutenticado = async (req, res,next) => {
-
-    const userToken = req.get('Authorization');
-
-    if(userToken){
-        // obtenemos el token del usuario autenticado y lo verificamos
-        const token = userToken.split(' ')[1];
-
-        const usuario = jwt.verify(token, process.env.SECRET_JWT);
-        console.log(usuario);
-
-    }else{
-        console.log('El Token no es valido!');
-    }
-
-    return next();
-
+const usuarioAutenticado = async (req, res, next) => {
+  
+  res.status(200).json({usuario: req.usuario})
 };
 
 export { autenticarUsuario, usuarioAutenticado };
