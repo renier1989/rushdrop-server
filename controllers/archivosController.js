@@ -1,16 +1,12 @@
 import multer from "multer";
 import shortid from "shortid";
 import { URL } from "url";
+import fs from "fs";
 
+const  uploadPath = new URL('../uploads', import.meta.url).pathname;
+const pathU = uploadPath.includes(':') ? uploadPath.split(':')[1] : uploadPath
 
-const subirArchivo = (req, res, next) => {
-    const  uploadPath = new URL('../uploads', import.meta.url).pathname;
-    console.log(uploadPath);
-    
-    const pathU = uploadPath.includes(':') ? uploadPath.split(':')[1] : uploadPath
-    
-    console.log(pathU);
-    
+const subirArchivo = (req, res, next) => {    
     const configurationMulter = {
         limits: {fileSize : req.usuario ? 1024 * 1024 * 10 : 1024 * 1024} ,
         storage :  multer.diskStorage({
@@ -43,8 +39,15 @@ const subirArchivo = (req, res, next) => {
         }
     })
 };
-const eliminarArchivo = (req, res, next) => {
-  console.log("eliminar el archivo");
+const eliminarArchivo = async (req, res, next) => {
+  console.log(req.archivo);
+
+  try {
+    fs.unlinkSync(`${pathU}/${req.archivo}`);
+    console.log('archivo eliminado');
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export {subirArchivo, eliminarArchivo}

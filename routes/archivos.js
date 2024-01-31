@@ -8,6 +8,4 @@ const router = express.Router();
 
 router.post("/", authCheck, subirArchivo);
 
-router.delete("/:id", authCheck, eliminarArchivo);
-
 export default router;
