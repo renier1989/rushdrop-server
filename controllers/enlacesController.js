@@ -11,10 +11,10 @@ const nuevoEnlace = async (req, res, next) => {
   }
 
   // 2.  CREAR LA ESTRUCTURA PARA EL ENLACE
-  const { nombre_original } = req.body;
+  const { nombre_original,nombre } = req.body;
   const enlace = new Enlace();
   enlace.url = shortid.generate();
-  enlace.nombre = shortid.generate(); // Tienes que ser un nombre unico
+  enlace.nombre = nombre; // Tienes que ser un nombre unico
   enlace.nombre_original = nombre_original;
 
   // SI EL USUARIO ESTA AUTENTICADO
