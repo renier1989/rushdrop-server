@@ -60,6 +60,8 @@ const obtenerEnlace = async (req, res, next) => {
   if (descargas === 1) {
     // asigno en el request el nombre del archivo que se va a eliminar
     req.archivo = nombre;
+
+    return;
     // luego hay que eliminar la entrada del enlace des la BD
     await Enlace.deleteOne({ url });
 
@@ -73,4 +75,14 @@ const obtenerEnlace = async (req, res, next) => {
   }
 };
 
-export { nuevoEnlace, obtenerEnlace };
+// obtener el listado de todos los enlaces
+const todosLosEnlaces = async (req, res) => {
+    try {
+        const enlaces = await Enlace.find({}).select('url nombre -_id');
+        res.json({enlaces})
+    } catch (error) {
+      console.log(error);
+    }
+}
+
+export { nuevoEnlace, obtenerEnlace,todosLosEnlaces };

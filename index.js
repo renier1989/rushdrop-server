@@ -19,6 +19,10 @@ app.use( cors(corsOptions));
 // puerto de la app
 const port = process.env.PORT || 4000;
 // definiendo las rutas de la app
+
+// habilitando la carpeta publica para la descarga de los archivos
+app.use( express.static('uploads'))
+
 app.use('/api/usuarios',usuariosRoutes);  
 app.use('/api/auth',authRoutes);  
 app.use('/api/enlaces',enlacesRoutes);  
