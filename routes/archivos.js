@@ -9,6 +9,6 @@ const router = express.Router();
 
 router.post("/", authCheck, subirArchivo);
 
-router.get("/:archivos", descargarArchivo);
+router.get("/:archivos", descargarArchivo,eliminarArchivo);
 
 export default router;

@@ -2,6 +2,7 @@ import multer from "multer";
 import shortid from "shortid";
 import { URL } from "url";
 import fs from "fs";
+import Enlace from '../models/Enlace.js'
 
 const uploadPath = new URL("../uploads", import.meta.url).pathname;
 const pathU = uploadPath.includes(":") ? uploadPath.split(":")[1] : uploadPath;
@@ -43,19 +44,45 @@ const subirArchivo = (req, res, next) => {
     }
   });
 };
+
+const descargarArchivo = async (req, res, next) => {
+  const {archivos} = req.params;
+  // buscamos el enlace que contiene el archivo que se quiere descargar
+  const enlace = await Enlace.findOne({nombre: archivos })
+
+  const archivoDescarga = `${pathU}/${archivos}`;
+  res.download(archivoDescarga);
+
+  // aqui se debe eliminar el archivo y el registro en la BD
+    // comprobamos la cantidad de descargas, si este es igual a 1 entonces se borra del server
+    const { descargas, nombre } = enlace;
+    if (descargas === 1) {
+      // asigno en el request el nombre del archivo que se va a eliminar
+      req.archivo = nombre;
+  
+      // luego hay que eliminar la entrada del enlace des la BD
+      await Enlace.deleteOne({_id: enlace.id});
+  
+      // aqui paso al siguiente middleware declarado en las rutas para la eliminacion del archivo
+      next();
+    }
+    // si las descargas con mayores 1 , le iremos restando en uno
+    else {
+      enlace.descargas--;
+      await enlace.save();
+    }
+
+
+};
+
 const eliminarArchivo = async (req, res, next) => {
-  console.log(req.archivo);
 
   try {
     fs.unlinkSync(`${pathU}/${req.archivo}`);
-    console.log("archivo eliminado");
   } catch (error) {
     console.log(error);
   }
 };
-const descargarArchivo = async (req, res) => {
-  const archivo = `${pathU}/${req.params.archivos}`;
-  res.download(archivo);
-};
+
 
 export { subirArchivo, eliminarArchivo, descargarArchivo };

@@ -11,7 +11,7 @@ const nuevoEnlace = async (req, res, next) => {
   }
 
   // 2.  CREAR LA ESTRUCTURA PARA EL ENLACE
-  const { nombre_original,nombre } = req.body;
+  const { nombre_original, nombre } = req.body;
   const enlace = new Enlace();
   enlace.url = shortid.generate();
   enlace.nombre = nombre; // Tienes que ser un nombre unico
@@ -43,6 +43,22 @@ const nuevoEnlace = async (req, res, next) => {
   }
 };
 
+const tienePassword = async (req, res, next) => {
+  // comprobamos que el enlace existe
+  const { url } = req.params;
+  const enlace = await Enlace.findOne({ url });
+  if (!enlace) {
+    res.status(404).json({ msg: "Enlace no esta Disponible." });
+    return next();
+  }
+
+  if (enlace.password) {
+    return res.json({ password: true, enlace: enlace.url });
+  }
+
+  next();
+};
+
 const obtenerEnlace = async (req, res, next) => {
   // comprobamos que el enlace existe
   const { url } = req.params;
@@ -53,36 +69,36 @@ const obtenerEnlace = async (req, res, next) => {
   }
 
   // si el enlace si existe, retornamos el nombre del enlace
-  res.status(200).json({ archivo: enlace.nombre });
-
-  // comprobamos la cantidad de descargas, si este es igual a 1 entonces se borra del server
-  const { descargas, nombre } = enlace;
-  if (descargas === 1) {
-    // asigno en el request el nombre del archivo que se va a eliminar
-    req.archivo = nombre;
-
-    return;
-    // luego hay que eliminar la entrada del enlace des la BD
-    await Enlace.deleteOne({ url });
-
-    // aqui paso al siguiente middleware declarado en las rutas para la eliminacion del archivo
-    next();
-  }
-  // si las descargas con mayores 1 , le iremos restando en uno
-  else {
-    enlace.descargas--;
-    await enlace.save();
-  }
+  res.status(200).json({ archivo: enlace.nombre, password:false });
+  next();
 };
 
 // obtener el listado de todos los enlaces
 const todosLosEnlaces = async (req, res) => {
-    try {
-        const enlaces = await Enlace.find({}).select('url nombre -_id');
-        res.json({enlaces})
-    } catch (error) {
-      console.log(error);
-    }
+  try {
+    const enlaces = await Enlace.find({}).select("url nombre -_id");
+    res.json({ enlaces });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const verificarPassword = async (req, res,next) => {
+  const {url} = req.params
+  const { password } = req.body
+
+  // consulto por el enlace
+  const enlace = await Enlace.findOne({ url });
+
+  // luego verifico el si el password es correcto
+  if(bcrypt.compareSync(password, enlace.password)){
+    next();
+  }else{
+    res.status(401).json({msg: 'Password incorrecto.!'});
+  }
+  
+
+  
 }
 
-export { nuevoEnlace, obtenerEnlace,todosLosEnlaces };
+export { nuevoEnlace, obtenerEnlace, todosLosEnlaces, tienePassword,verificarPassword };
