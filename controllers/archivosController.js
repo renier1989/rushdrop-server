@@ -49,13 +49,19 @@ const descargarArchivo = async (req, res, next) => {
   const {archivos} = req.params;
   // buscamos el enlace que contiene el archivo que se quiere descargar
   const enlace = await Enlace.findOne({nombre: archivos })
+  if(!enlace){
+    return res.status(404).json({ msg: 'Ya no esta disponible el Archivo ...' });
+  }
 
   const archivoDescarga = `${pathU}/${archivos}`;
   res.download(archivoDescarga);
 
+  
+
   // aqui se debe eliminar el archivo y el registro en la BD
     // comprobamos la cantidad de descargas, si este es igual a 1 entonces se borra del server
     const { descargas, nombre } = enlace;
+
     if (descargas === 1) {
       // asigno en el request el nombre del archivo que se va a eliminar
       req.archivo = nombre;
