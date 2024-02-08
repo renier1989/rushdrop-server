@@ -48,29 +48,30 @@ const tienePassword = async (req, res, next) => {
   const { url } = req.params;
   const enlace = await Enlace.findOne({ url });
   if (!enlace) {
-    res.status(404).json({ msg: "Enlace no esta Disponible." });
-    return next();
+    return res.status(404).json({ msg: "Enlace no esta Disponible." });
   }
 
   if (enlace.password) {
     return res.json({ password: true, enlace: enlace.url });
   }
-
   next();
+
 };
 
 const obtenerEnlace = async (req, res, next) => {
   // comprobamos que el enlace existe
   const { url } = req.params;
   const enlace = await Enlace.findOne({ url });
+  
+
   if (!enlace) {
-    res.status(404).json({ msg: "Enlace no esta Disponible." });
+    console.log("aqui entra en el error...................");
+    return res.status(404).json({ msg: "Enlace no esta Disponible." });
+  } else {
+    // si el enlace si existe, retornamos el nombre del enlace
+      res.status(200).json({ archivo: enlace.nombre, password: false });
     return next();
   }
-
-  // si el enlace si existe, retornamos el nombre del enlace
-  res.status(200).json({ archivo: enlace.nombre, password:false });
-  next();
 };
 
 // obtener el listado de todos los enlaces
@@ -83,22 +84,25 @@ const todosLosEnlaces = async (req, res) => {
   }
 };
 
-const verificarPassword = async (req, res,next) => {
-  const {url} = req.params
-  const { password } = req.body
+const verificarPassword = async (req, res, next) => {
+  const { url } = req.params;
+  const { password } = req.body;
 
   // consulto por el enlace
   const enlace = await Enlace.findOne({ url });
 
   // luego verifico el si el password es correcto
-  if(bcrypt.compareSync(password, enlace.password)){
+  if (bcrypt.compareSync(password, enlace.password)) {
     next();
-  }else{
-    res.status(401).json({msg: 'Password incorrecto.!'});
+  } else {
+    res.status(401).json({ msg: "Password incorrecto.!" });
   }
-  
+};
 
-  
-}
-
-export { nuevoEnlace, obtenerEnlace, todosLosEnlaces, tienePassword,verificarPassword };
+export {
+  nuevoEnlace,
+  obtenerEnlace,
+  todosLosEnlaces,
+  tienePassword,
+  verificarPassword,
+};

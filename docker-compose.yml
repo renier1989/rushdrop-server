@@ -2,8 +2,10 @@ version: '3'
 services:
   backend:
     container_name: rush-drop-server
-    image: renier1989/rush-drop-server:test3
+    image: renier1989/rush-drop-server
     environment:
       - MONGO_URL=${MONGO_URL}
+      - SECRET_JWT=${SECRET_JWT}
+      - FRONTEND_URL=${FRONTEND_URL}
     ports:
       - "4001:4000"

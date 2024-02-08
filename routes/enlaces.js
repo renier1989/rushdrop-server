@@ -30,7 +30,7 @@ router.get('/',
 // desde el controlador con next()
 router.get("/:url", 
 tienePassword,
-obtenerEnlace, );
+obtenerEnlace );
 
 router.post("/:url",
 verificarPassword,
