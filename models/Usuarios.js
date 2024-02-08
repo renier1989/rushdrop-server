@@ -19,6 +19,12 @@ const usuarioSchema = new Schema({
         required: true,
         trim: true,
     },
+    enlaces: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Enlaces"
+        }
+    ]
 });
 
 const Usuario = mongoose.model('Usuario',usuarioSchema);

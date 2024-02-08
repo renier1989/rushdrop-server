@@ -14,6 +14,7 @@ const autenticarUsuario = async (req, res, next) => {
   // 2. verificar si el usuario esta registrado
   const { email, password } = req.body;
   const user = await Usuario.findOne({ email });
+  
   if (!user) {
     res
       .status(401)

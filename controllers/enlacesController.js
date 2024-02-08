@@ -99,10 +99,26 @@ const verificarPassword = async (req, res, next) => {
   }
 };
 
+// funcion para obtener los enlaces de un usuario autenticado
+const obtenerEnelacesUsuario = async (req,res,next) =>{
+  console.log(req.usuario);
+  
+  if(!req.usuario){
+    return res.status(404).json({ msg: "Inicie Sesion para ver sus enlaces." });
+  }
+
+  const enlaces = await Enlace.find({
+    autor : req.usuario.id
+  }).select(" -__v -autor")
+  res.status(200).json(enlaces);
+}
+
+
 export {
   nuevoEnlace,
   obtenerEnlace,
   todosLosEnlaces,
   tienePassword,
   verificarPassword,
+  obtenerEnelacesUsuario,
 };
