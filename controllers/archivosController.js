@@ -47,7 +47,7 @@ const subirArchivo = (req, res, next) => {
 
 const descargarArchivo = async (req, res, next) => {
   const {archivos} = req.params;
-  console.log(archivos);
+  // console.log(archivos);
   // buscamos el enlace que contiene el archivo que se quiere descargar
   const enlace = await Enlace.findOne({nombre: archivos })
   if(!enlace){

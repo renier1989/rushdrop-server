@@ -5,7 +5,7 @@ import {
   todosLosEnlaces,
   tienePassword,
   verificarPassword,
-  obtenerEnelacesUsuario
+  obtenerEnelacesUsuario,
 } from "../controllers/enlacesController.js";
 import { check } from "express-validator";
 import authCheck from "../middleware/auth.js";
@@ -22,26 +22,13 @@ router.post(
   nuevoEnlace
 );
 
-router.get('/',
-  todosLosEnlaces
-)
-
-
+router.get("/", todosLosEnlaces);
 
 // aqui lo que se hace es poner dos funciones, con el objetivo que que cuando se analice el enlace
 // si es que ya no posee mas descargas pase obtenerEnlace a eliminarAchivo, pasando al siguiente middleware
 // desde el controlador con next()
-router.get("/:url", 
-tienePassword,
-obtenerEnlace );
+router.get("/:url", tienePassword, obtenerEnlace);
 
-router.post("/:url",
-verificarPassword,
-obtenerEnlace,
-)
-
-
-
-
+router.post("/:url", verificarPassword, obtenerEnlace);
 
 export default router;

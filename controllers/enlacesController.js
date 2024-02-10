@@ -52,24 +52,26 @@ const tienePassword = async (req, res, next) => {
   }
 
   if (enlace.password) {
-    return res.json({ archivo: enlace.nombre, password: true, enlace: enlace.url });
+    return res.json({
+      archivo: enlace.nombre,
+      password: true,
+      enlace: enlace.url,
+    });
   }
   next();
-
 };
 
 const obtenerEnlace = async (req, res, next) => {
   // comprobamos que el enlace existe
   const { url } = req.params;
   const enlace = await Enlace.findOne({ url });
-  
 
   if (!enlace) {
     console.log("aqui entra en el error...................");
     return res.status(404).json({ msg: "Enlace no esta Disponible." });
   } else {
     // si el enlace si existe, retornamos el nombre del enlace
-      res.status(200).json({ archivo: enlace.nombre, password: false });
+    res.status(200).json({ archivo: enlace.nombre, password: false });
     return next();
   }
 };
@@ -100,19 +102,36 @@ const verificarPassword = async (req, res, next) => {
 };
 
 // funcion para obtener los enlaces de un usuario autenticado
-const obtenerEnelacesUsuario = async (req,res,next) =>{
-  console.log(req.usuario);
-  
-  if(!req.usuario){
+const obtenerEnelacesUsuario = async (req, res) => {
+  // console.log(req.usuario);
+
+  if (!req.usuario) {
     return res.status(404).json({ msg: "Inicie Sesion para ver sus enlaces." });
   }
 
   const enlaces = await Enlace.find({
-    autor : req.usuario.id
-  }).select(" -__v -autor")
+    autor: req.usuario.id,
+  }).select(" -__v -autor");
   res.status(200).json(enlaces);
-}
+};
 
+// funcion para poder eliminar un enlaces que un usuario haya creado
+const eliminarEnlaceUsuario = async (req, res) => {
+  if (!req.usuario) {
+    return res.status(404).json({ msg: "Esta accion solo esta permitida para los usuarios autenticados." });
+  }
+  try {
+    const { url } = req.body;
+    const enlace = await Enlace.findOne({ url });
+    if (!enlace) {
+      return res.status(404).json({ msg: "El enlace no esta disponible.." });
+    }
+    await Enlace.deleteOne({ url });
+    return res.status(200).json({ msg: "Enlace Eliminado con exito." });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export {
   nuevoEnlace,
@@ -121,4 +140,5 @@ export {
   tienePassword,
   verificarPassword,
   obtenerEnelacesUsuario,
+  eliminarEnlaceUsuario,
 };
